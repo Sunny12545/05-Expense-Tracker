@@ -32,6 +32,50 @@ app.get('/expenses',async(req,res)=>{
     }
 })
 
+app.post('/expenses',async(req,res)=>{
+    try{
+        const expense = await new Expense({
+            title:req.body.title,
+            amount:req.body.amount,
+            category:req.body.category
+        })
+        await expense.save()
+        res.json(expense)
+    }catch(err){
+        res.status(500).json({
+            message:err.message
+        })
+    }
+})
+
+app.delete('/expenses/:id',async(req,res)=>{
+    try{
+        await Expense.findByIdAndDelete(req.params.id)
+        res.json({message:'Expense Deleted'})
+    }catch(err){
+        res.status(500).json({
+            message:err.message
+        })
+    }
+})
+
+app.put('/expenses/:id',async(req,res)=>{
+    try{
+        const expense = await Expense.findById(req.params.id)
+        expense.title=req.body.title,
+        expense.amount=req.body.amount,
+        expense.category=req.body.category
+
+        await expense.save()
+        res.json(expense)
+        
+    }catch(err){
+        res.status(500).json({
+            message:err.message
+        })
+    }
+})
+
 app.listen(process.env.PORT,()=>{
     console.log(`server is up and running on http://localhost:${process.env.PORT}`)
 })
